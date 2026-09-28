@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberAgility — Knowledge Base & Study Notes</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                            dark: '#0F172A',
+                            card: '#1E293B',
+                            border: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background-color: #0F172A; color: #F8FAFC; font-family: system-ui, -apple-system, sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="border-b border-cyber-border bg-cyber-dark/80 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.showHome()">
+                <div class="w-8 h-8 rounded bg-cyber-500/10 border border-cyber-500 flex items-center justify-center text-cyber-500 font-bold">
+                    <i data-lucide="shield-check" class="w-5 h-5"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tight text-white">Cyber<span class="text-cyber-500">Agility</span></span>
+            </div>
+            
+            <div class="flex items-center space-x-3" id="authBtnContainer"></div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-8" id="mainContent"></main>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-cyber-card border border-cyber-border rounded-xl max-w-md w-full p-6 shadow-xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i data-lucide="lock" class="w-5 h-5 text-cyber-500"></i> Admin Portal Login
+                </h3>
+                <button onclick="app.closeModal('loginModal')" class="text-gray-400 hover:text-white">&times;</button>
+            </div>
+            <form onsubmit="app.handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Username / Email</label>
+                    <input type="text" id="loginUser" required placeholder="admin@cyberagility.com" class="w-full bg-cyber-dark border border-cyber-border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Password</label>
+                    <input type="password" id="loginPass" required placeholder="••••••••" class="w-full bg-cyber-dark border border-cyber-border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyber-500">
+                </div>
+                <div id="loginError" class="text-xs text-red-400 hidden">Invalid Username or Password</div>
+                <button type="submit" class="w-full bg-cyber-500 hover:bg-cyber-600 text-white font-medium py-2 rounded text-sm transition">Login</button>
+            </form>
+            <p class="text-xs text-gray-400 mt-4 text-center">Default: User: <code class="text-cyber-500">admin</code> | Pass: <code class="text-cyber-500">admin123</code></p>
+        </div>
+    </div>
+
+    <!-- Write Article Modal -->
+    <div id="writeModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-cyber-card border border-cyber-border rounded-xl max-w-2xl w-full p-6 shadow-xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i data-lucide="file-plus" class="w-5 h-5 text-cyber-500"></i> Create New Article
+                </h3>
+                <button onclick="app.closeModal('writeModal')" class="text-gray-400 hover:text-white">&times;</button>
+            </div>
+            <form onsubmit="app.handleCreatePost(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Article Title</label>
+                    <input type="text" id="postTitle" required placeholder="e.g., Threat Modeling in Sprint Planning" class="w-full bg-cyber-dark border border-cyber-border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Category Tag</label>
+                    <input type="text" id="postCategory" required placeholder="e.g., DevSecOps, CloudSecurity" class="w-full bg-cyber-dark border border-cyber-border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Content (Markdown supported)</label>
+                    <textarea id="postContent" rows="6" required placeholder="Write your notes or study guide here..." class="w-full bg-cyber-dark border border-cyber-border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyber-500"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-cyber-500 hover:bg-cyber-600 text-white font-medium py-2 rounded text-sm transition">Publish Article</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-cyber-border py-6 text-center text-xs text-gray-400">
+        <p>&copy; CyberAgility Portal — Open Source Study & Reference Base</p>
+    </footer>
+
+    <!-- App Logic Script -->
+    <script>
+        const defaultPosts = [
+            {
+                id: "1",
+                title: "Threat Modeling in Sprint Planning",
+                excerpt: "Integrating STRIDE threat modeling into early sprint user stories to shift security left without slowing down delivery velocity.",
+                content: "Threat modeling shouldn't be a bottleneck at the end of a release cycle. By embedding lightweight STRIDE threat modeling directly into backlog grooming and sprint planning, agile engineering teams can identify vulnerabilities early.\n\n### Key Steps for Agile Security:\n- Define trust boundaries during story refinement.\n- Identify data flows and entry points.\n- Assign security acceptance criteria directly to user stories.",
+                category: "DevSecOps",
+                author: "Admin",
+                date: "2026-09-20",
+                readTime: "4 min read",
+                claps: 18
+            }
+        ];
+
+        class App {
+            constructor() {
+                this.posts = JSON.parse(localStorage.getItem('cyber_posts')) || defaultPosts;
+                this.isAdmin = localStorage.getItem('cyber_admin') === 'true';
+                this.init();
+            }
+
+            init() {
+                this.renderAuthBtn();
+                this.showHome();
+                lucide.createIcons();
+            }
+
+            savePosts() {
+                localStorage.setItem('cyber_posts', JSON.stringify(this.posts));
+            }
+
+            renderAuthBtn() {
+                const container = document.getElementById('authBtnContainer');
+                if (this.isAdmin) {
+                    container.innerHTML = `
+                        <button onclick="app.openModal('writeModal')" class="text-xs bg-cyber-500 hover:bg-cyber-600 text-white font-medium px-3 py-1.5 rounded transition flex items-center space-x-1.5">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <span>Write</span>
+                        </button>
+                        <button onclick="app.logout()" class="text-xs border border-red-500/30 text-red-400 hover:bg-red-500/10 px-3 py-1.5 rounded transition">Logout</button>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <button onclick="app.openModal('loginModal')" class="text-xs bg-cyber-500/10 text-cyber-500 border border-cyber-500/30 hover:bg-cyber-500/20 px-3 py-1.5 rounded transition font-medium">Admin Login</button>
+                    `;
+                }
+                lucide.createIcons();
+            }
+
+            openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+            closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+            handleLogin(e) {
+                e.preventDefault();
+                const user = document.getElementById('loginUser').value;
+                const pass = document.getElementById('loginPass').value;
+                const err = document.getElementById('loginError');
+
+                if ((user === 'admin' || user === 'admin@cyberagility.com') && pass === 'admin123') {
+                    this.isAdmin = true;
+                    localStorage.setItem('cyber_admin', 'true');
+                    this.closeModal('loginModal');
+                    this.renderAuthBtn();
+                    this.showHome();
+                } else {
+                    err.classList.remove('hidden');
+                }
+            }
+
+            logout() {
+                this.isAdmin = false;
+                localStorage.removeItem('cyber_admin');
+                this.renderAuthBtn();
+                this.showHome();
+            }
+
+            handleCreatePost(e) {
+                e.preventDefault();
+                const title = document.getElementById('postTitle').value;
+                const category = document.getElementById('postCategory').value;
+                const content = document.getElementById('postContent').value;
+
+                const newPost = {
+                    id: Date.now().toString(),
+                    title,
+                    excerpt: content.substring(0, 120) + '...',
+                    content,
+                    category,
+                    author: 'Admin',
+                    date: new Date().toISOString().split('T')[0],
+                    readTime: Math.ceil(content.split(' ').length / 200) + ' min read',
+                    claps: 0
+                };
+
+                this.posts.unshift(newPost);
+                this.savePosts();
+                this.closeModal('writeModal');
+                this.showHome();
+            }
+
+            showHome() {
+                const container = document.getElementById('mainContent');
+                container.innerHTML = `
+                    <div class="mb-8 border-b border-cyber-border pb-6">
+                        <h1 class="text-2xl font-bold text-white">CyberAgility Study Base</h1>
+                        <p class="text-sm text-gray-400 mt-1">Technical notes, DevSecOps practices, and security revision guides.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        ${this.posts.map(p => `
+                            <article class="bg-cyber-card border border-cyber-border rounded-lg p-5 flex flex-col justify-between hover:border-cyber-500/50 transition">
+                                <div>
+                                    <div class="flex items-center justify-between text-xs text-gray-400 mb-3">
+                                        <span class="px-2 py-0.5 rounded bg-cyber-500/10 text-cyber-500 border border-cyber-500/20">${p.category}</span>
+                                        <span>${p.readTime}</span>
+                                    </div>
+                                    <h2 class="text-lg font-semibold text-white mb-2 cursor-pointer hover:text-cyber-500" onclick="app.showPost('${p.id}')">${p.title}</h2>
+                                    <p class="text-sm text-gray-300 line-clamp-2 mb-4">${p.excerpt}</p>
+                                </div>
+                                <div class="flex items-center justify-between pt-4 border-t border-cyber-border text-xs text-gray-400">
+                                    <span>${p.date}</span>
+                                    <button onclick="app.clap('${p.id}')" class="flex items-center space-x-1 hover:text-cyber-500">
+                                        <i data-lucide="thumbs-up" class="w-4 h-4"></i>
+                                        <span>${p.claps}</span>
+                                    </button>
+                                </div>
+                            </article>
+                        `).join('')}
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+
+            showPost(id) {
+                const post = this.posts.find(p => p.id === id);
+                if (!post) return;
+
+                const container = document.getElementById('mainContent');
+                container.innerHTML = `
+                    <button onclick="app.showHome()" class="text-xs text-cyber-500 hover:underline mb-6 flex items-center space-x-1">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        <span>Back to Articles</span>
+                    </button>
+                    <article class="bg-cyber-card border border-cyber-border rounded-lg p-6 max-w-3xl mx-auto">
+                        <div class="flex items-center space-x-3 text-xs text-gray-400 mb-4">
+                            <span class="px-2 py-0.5 rounded bg-cyber-500/10 text-cyber-500 border border-cyber-500/20">${post.category}</span>
+                            <span>•</span>
+                            <span>${post.date}</span>
+                            <span>•</span>
+                            <span>${post.readTime}</span>
+                        </div>
+                        <h1 class="text-2xl font-bold text-white mb-6">${post.title}</h1>
+                        <div class="prose prose-invert max-w-none text-gray-200 text-sm leading-relaxed whitespace-pre-wrap">${post.content}</div>
+                    </article>
+                `;
+                lucide.createIcons();
+            }
+
+            clap(id) {
+                const post = this.posts.find(p => p.id === id);
+                if (post) {
+                    post.claps++;
+                    this.savePosts();
+                    this.showHome();
+                }
+            }
+        }
+
+        const app = new App();
+    </script>
+</body>
+</html>

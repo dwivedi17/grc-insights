@@ -144,20 +144,9 @@
 
             renderAuthBtn() {
                 const container = document.getElementById('authBtnContainer');
-                if (this.isAdmin) {
-                    container.innerHTML = `
-                        <button onclick="app.openModal('writeModal')" class="text-xs bg-cyber-500 hover:bg-cyber-600 text-white font-medium px-3 py-1.5 rounded transition flex items-center space-x-1.5">
-                            <i data-lucide="plus" class="w-4 h-4"></i>
-                            <span>Write</span>
-                        </button>
-                        <button onclick="app.logout()" class="text-xs border border-red-500/30 text-red-400 hover:bg-red-500/10 px-3 py-1.5 rounded transition">Logout</button>
-                    `;
-                } else {
-                    container.innerHTML = `
-                        <button onclick="app.openModal('loginModal')" class="text-xs bg-cyber-500/10 text-cyber-500 border border-cyber-500/30 hover:bg-cyber-500/20 px-3 py-1.5 rounded transition font-medium">Admin Login</button>
-                    `;
-                }
-                lucide.createIcons();
+						if (container) {
+							container.innerHTML = ''; // Keeps the header clean with no login button
+						}
             }
 
             openModal(id) { document.getElementById(id).classList.remove('hidden'); }

@@ -240,7 +240,7 @@
                                     <p class="text-sm text-gray-300 line-clamp-2 mb-4">${p.excerpt}</p>
                                 </div>
                                 <div class="flex items-center justify-between pt-4 border-t border-cyber-border text-xs text-gray-400">
-                                    <span>${p.author || p.date || ""}</span>
+                                    <span>${p.author}</span>
                                     <button onclick="app.clap('${p.id}')" class="flex items-center space-x-1 hover:text-cyber-500">
                                         <i data-lucide="thumbs-up" class="w-4 h-4"></i>
                                         <span>${p.claps >= 1000 ? (p.claps / 1000).toFixed(1) + 'k' : p.claps}</span>
@@ -268,7 +268,7 @@
                         <div class="flex items-center space-x-3 text-xs text-gray-400 mb-4">
                             <span class="px-2 py-0.5 rounded bg-cyber-500/10 text-cyber-500 border border-cyber-500/20">${post.category}</span>
                             <span>•</span>
-                            <span>${post.author || post.date || ""}</span>
+                            <span>${post.author}</span>
                             <span>•</span>
                             <span>${post.readTime}</span>
                         </div>

@@ -126,7 +126,7 @@
 			    author: "Himanshu Dwivedi",
 			    date: "2026-10-26",
 			    readTime: "9 min read",
-			    claps: 2.7k
+			    claps: 2731
 			}
 
         ];
@@ -243,7 +243,7 @@
                                     <span>${p.date}</span>
                                     <button onclick="app.clap('${p.id}')" class="flex items-center space-x-1 hover:text-cyber-500">
                                         <i data-lucide="thumbs-up" class="w-4 h-4"></i>
-                                        <span>${p.claps}</span>
+                                        <span>${p.claps >= 1000 ? (p.claps / 1000).toFixed(1) + 'k' : p.claps}</span>
                                     </button>
                                 </div>
                             </article>
